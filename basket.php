@@ -14,7 +14,16 @@ include ("headfile.html"); //include header layout file
 
 echo "<h4>".$pagename."</h4>"; //display name of the page on the web page
 
-
+//if the value of the product id to be deleted (which was posted through the hidden field) is set
+if (isset($_POST['del_prodid']))
+    {
+    //capture the posted product id and assign it to a local variable $delprodid
+    $delprodid=$_POST['del_prodid'];
+    //unset the cell of the session for this posted product id variable
+    unset ($_SESSION['basket'][$delprodid]);
+    //display a "1 item removed from the basket" message
+    echo "<p>1 item removed";
+    }
 
 
 
@@ -50,7 +59,7 @@ $total= 0; //Create a variable $total and initialize it to zero
 //Create HTML table with header to display the content of the basket: prod name, price, selected quantity and subtotal
 echo "<p><table id='baskettable'>";
 echo "<tr>";
-echo "<th>Product Name</th><th>Price</th><th>Quantity</th><th>Subtotal</th>";
+echo "<th>Product Name</th><th>Price</th><th>Quantity</th><th>Subtotal</th><th>Remove Products</th>";
 echo "</tr>";
 //if the session array $_SESSION['basket'] is set
 if (isset($_SESSION['basket'])) //This checks if the basket exists in the session. If it does, we will list its contents.
@@ -62,34 +71,42 @@ if (isset($_SESSION['basket'])) //This checks if the basket exists in the sessio
     foreach($_SESSION['basket'] as $newprodid => $reququantity) // This loop goes through each item in the basket and displays it.
                                                                 //  $newprodid is the key and $reququantity is the value.
                                                                 //  For example, if the basket has product 1 with quantity 2, $newprodid will be 1 and $reququantity will be 2.
-                                                                
-                                                                
     {
-    //SQL query to retrieve from Product table details of selected product for which id matches $index
-    //execute query and create array of records $arrayp
-    $SQL="select prodId, prodName,prodPrice from product where prodId=".$newprodid;
+        //SQL query to retrieve from Product table details of selected product for which id matches $newprodid
+        //execute query and create array of records $arrayp
+        $SQL="select prodId, prodName,prodPrice from product where prodId=".$newprodid;
 
-    $exeSQL=mysqli_query($conn, $SQL) or die (mysql_error($conn));
+        $exeSQL=mysqli_query($conn, $SQL) or die (mysqli_error($conn));
 
-    $arrayp=mysqli_fetch_array($exeSQL);
-    echo "<tr>";
-    //display product name & product price using array of records $arrayp
-    echo "<td>".$arrayp['prodName']."</td>";
-    echo "<td>&pound".number_format($arrayp['prodPrice'],2)."</td>";
-    // display selected quantity of product retrieved from the cell of session array and now in $value
-    echo "<td style='text-align:center;'>".$reququantity."</td>";
-    //calculate subtotal, store it in a local variable $subtotal and display it
-    $subtotal=$arrayp['prodPrice'] * $reququantity;
-    echo "<td>&pound".number_format($subtotal,2)."</td>";
-    echo "</tr>";
-    //increase total by adding the subtotal to the current total
-    $total=$total+$subtotal;
- }
+        $arrayp=mysqli_fetch_array($exeSQL);
+        echo "<tr>";
+        //display product name & product price using array of records $arrayp
+        echo "<td>".$arrayp['prodName']."</td>";
+        echo "<td>&pound".number_format($arrayp['prodPrice'],2)."</td>";
+        // display selected quantity of product retrieved from the cell of session array and now in $reququantity
+        echo "<td style='text-align:center;'>".$reququantity."</td>";
+        //calculate subtotal, store it in a local variable $subtotal and display it
+        $subtotal=$arrayp['prodPrice'] * $reququantity;
+        echo "<td>&pound".number_format($subtotal,2)."</td>";
+         // --- NEW CODE: Add a REMOVE button for this item ---
+         echo "<td>";
+         echo "<form action='basket.php' method='post'>";
+         echo "<input type='submit' value='Remove' id='submitbtn'>";
+         echo "<input type='hidden' name='del_prodid' value='".$newprodid."'>";
+         echo "</form>";
+         echo "</td>";
+         // --- END NEW CODE: Add a REMOVE button for this item ---
+        
+         echo "</tr>";
+        
+        //increase total by adding the subtotal to the current total
+        $total=$total+$subtotal;
+    }
 }
 //else display empty basket message
 else 
 {
-echo "<p>Empty basket";
+    echo "<p>Empty basket";
 }
 // Display total
 echo "<tr>";
