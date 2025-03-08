@@ -15,10 +15,11 @@ include ("headfile.html"); //include header layout file
 echo "<h4>".$pagename."</h4>"; //display name of the page on the web page
 
 //if the value of the product id to be deleted (which was posted through the hidden field) is set
-if (isset($_POST['del_prodid']))
+if (isset($_POST['del_prodid'])) //after i  click remove button the del_prodid wil becomes one as an exmaple and sent to this page
+                                 // and this part will be executed
     {
     //capture the posted product id and assign it to a local variable $delprodid
-    $delprodid=$_POST['del_prodid'];
+    $delprodid=$_POST['del_prodid']; // and from this i get the hiddent data that is sent from the remove button(del_prodid) and assign it to delprodid
     //unset the cell of the session for this posted product id variable
     unset ($_SESSION['basket'][$delprodid]);
     //display a "1 item removed from the basket" message
@@ -31,6 +32,7 @@ if (isset($_POST['del_prodid']))
 if (isset($_POST['h_prodid'])) //The isset() function checks whether a variable is set, which means that it has to be declared and is not NULL.
                                 //This isset() function returns true if the variable exists and is not NULL, otherwise it returns false.
                                 // if i directly come to this page without adding any it should show the added one or a empty basket that why i used this 
+                                // this create beacuse user only if click add to cart button then only the h_prodid will be set and show in add cart page 
 {
     //capture the ID of selected product using the POST method and the $_POST superglobal variable
     //and store it in a new local variable called $newprodid
@@ -78,7 +80,7 @@ if (isset($_SESSION['basket'])) //This checks if the basket exists in the sessio
 
         $exeSQL=mysqli_query($conn, $SQL) or die (mysqli_error($conn));
 
-        $arrayp=mysqli_fetch_array($exeSQL);
+        $arrayp=mysqli_fetch_array($exeSQL); // fetcj the data from the exeSQL objet and store it in arrayp
         echo "<tr>";
         //display product name & product price using array of records $arrayp
         echo "<td>".$arrayp['prodName']."</td>";
@@ -92,7 +94,8 @@ if (isset($_SESSION['basket'])) //This checks if the basket exists in the sessio
          echo "<td>";
          echo "<form action='basket.php' method='post'>";
          echo "<input type='submit' value='Remove' id='submitbtn'>";
-         echo "<input type='hidden' name='del_prodid' value='".$newprodid."'>";
+         echo "<input type='hidden' name='del_prodid' value='".$newprodid."'>"; // if i click the removebutton the del prodid id becomes the newprodid(product id ) for that coressoponding produt
+                                                                                // and sent hiddinlt to this page and unset the session array for that product id
          echo "</form>";
          echo "</td>";
          // --- END NEW CODE: Add a REMOVE button for this item ---
