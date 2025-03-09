@@ -11,6 +11,8 @@ echo "<title>".$pagename."</title>"; //display name of the page as window title
 echo "<body>";
 
 include ("headfile.html"); //include header layout file
+include("detectlogin.php");
+
 
 echo "<h4>".$pagename."</h4>"; //display name of the page on the web page
 
@@ -54,7 +56,9 @@ if (isset($_POST['h_prodid'])) //The isset() function checks whether a variable 
     //Display "Current basket unchanged " message
 else
 {
-    echo "<p>Basket unchanged";
+    echo "<p>Basket unchanged"; // when i add a item to cart and navigate to index page, and again navigate to basket page it shows the added things with this message
+                                // how that happen is when i click basket in nav bar it call this page.. and check the h_prodid is set.. beacuse it isnt set this message called
+                                // and that under isset($_POST('basket')) function will show the existing items in basekt beacuse the added items id and qunantiy saves to the session array
 }
 
 $total= 0; //Create a variable $total and initialize it to zero
@@ -111,17 +115,24 @@ else
 {
     echo "<p>Empty basket";
 }
-// Display total
-echo "<tr>";
-echo "<td colspan=3>TOTAL</td>";
-echo "<td>&pound".number_format($total,2)."</td>";
-echo "</tr>";
-echo "</table>";
+    // Display total
+    echo "<tr>";
+    echo "<td colspan=3>TOTAL</td>";
+    echo "<td>&pound".number_format($total,2)."</td>";
+    echo "</tr>";
+    echo "</table>";
 
 echo "<br><p><a href='clearbasket.php'>CLEAR BASKET</a></p>";
 
+if (isset($_SESSION['userid']))
+{
+echo "<br><p><a href=checkout.php>CHECKOUT</a></p>";
+}
+else
+{
 echo "<br><p>New homteq customers: <a href='signup.php'>Sign up</a></p>";
 echo "<p>Returning homteq customers: <a href='login.php'>Login</a></p>";
+}
 
 include("footfile.html"); //include footer layout file
 echo "</body>";
